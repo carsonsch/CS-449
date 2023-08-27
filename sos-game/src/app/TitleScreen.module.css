@@ -1,0 +1,13 @@
+.banner {
+    height: 250px;
+    background-color: grey;
+    flex-grow: 1;
+}
+
+.titleScreen {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+

@@ -1,0 +1,18 @@
+.backgroundTextContainer {
+    /* display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; */
+    position: absolute;
+    top: -20vh;
+    left: 10vw;
+    z-index: -1;
+    width: 150vw;
+    height: 100vh;
+    transform: rotate(45deg);
+    line-height: 24px;
+}
+
+.backgroundText {
+    margin-right: 24px;
+    margin-bottom: 5px;
+}
