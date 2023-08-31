@@ -1,11 +1,11 @@
-import Image from 'next/image'
+"use client"
 import styles from './page.module.css'
-import TitleScreen from './TitleScreen'
+import Game from './Game'
 
 export default function Home() {
   return (
     <main>
-      <TitleScreen/>
+      <Game/>
     </main>
   )
 }

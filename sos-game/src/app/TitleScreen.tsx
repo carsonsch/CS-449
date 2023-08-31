@@ -1,14 +1,18 @@
+"use client"
+
 import ScrollingWordBackground from './ScrollingWordBackground'
 import styles from './TitleScreen.module.css'
 
-export default function TitleScreen() {
+export default function TitleScreen(props: { onGameStart: () => void; }) {
+
+    console.log("these are props:", props);
 
     return (
         <div>
-            <ScrollingWordBackground/>
             <div className={styles.titleScreen}>
                 <div className={styles.banner}>
-                    This is the title screen!
+                    <span className={styles.titleText}>SOS Game</span>
+                    <button className={styles.startButton} onClick={() => props.onGameStart()}>Start</button>
                 </div>
             </div>
         </div>
