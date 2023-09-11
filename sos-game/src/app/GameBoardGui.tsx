@@ -1,10 +1,10 @@
 "use client"
 
-import styles from './GameBoard.module.css'
+import styles from './GameBoardGui.module.css'
 import { useEffect, useState } from 'react'
 import GameBoardTile from './GameBoardTile';
 
-export default function GameBoard(props: { boardSize: number }) {
+export default function GameBoardGui(props: { boardSize: number }) {
     const [boardSize, setBoardSize] = useState<number>(props.boardSize);
     const [boardTiles, setBoardTiles] = useState<JSX.Element[]>();
 
@@ -24,9 +24,12 @@ export default function GameBoard(props: { boardSize: number }) {
     
     
     return (
+        <>
             <div className={styles.boardContainer} style={{gridTemplateColumns: `repeat(${boardSize}, 1fr)`}}>
                 {boardTiles}
             </div>
+            <div className={styles.boardLine}></div>
+        </>
     )
 }
   

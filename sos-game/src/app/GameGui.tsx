@@ -1,6 +1,6 @@
 "use client"
 
-import GameBoard from '@/app/GameBoard'
+import GameBoardGui from '@/app/GameBoardGui'
 import styles from './GameGui.module.css'
 import { useEffect, useState } from 'react'
 
@@ -29,7 +29,7 @@ export default function GameGui() {
                 </div>
                 
                 <div className={styles.gameBoardContainer}>
-                    <GameBoard boardSize={8}></GameBoard>
+                    <GameBoardGui boardSize={8}></GameBoardGui>
                 </div>
 
                 <div className={styles.playerOptions}>

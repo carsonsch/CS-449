@@ -5,8 +5,6 @@ import styles from './TitleScreen.module.css'
 
 export default function TitleScreen(props: { onGameStart: () => void; }) {
 
-    console.log("these are props:", props);
-
     return (
         <div>
             <div className={styles.titleScreen}>
