@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import TitleScreen from './TitleScreen';
 import styles from './TitleScreen.module.css'
-import GameBoard from './GameBoard';
+import GameGui from './GameGui';
 
 export default function Game() {
 
@@ -15,7 +15,7 @@ export default function Game() {
 
     return (
         (gameStarted
-            ? <GameBoard boardSize={3}></GameBoard>
+            ? <GameGui></GameGui>
             : <TitleScreen onGameStart={startGame}></TitleScreen>
         )
     )

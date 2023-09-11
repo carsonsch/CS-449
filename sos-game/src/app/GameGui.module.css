@@ -1,0 +1,27 @@
+.gameGuiContainer {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    width: 80vw;
+}
+
+.gameBoardContainer {
+    /* flex-grow: 1; */
+}
+
+.centerContainer {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.playerHeader {
+    text-align: center;
+    width: 100%;
+}
+
+.playerOptions * {
+    margin-right: 4px;
+}

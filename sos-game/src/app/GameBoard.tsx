@@ -24,11 +24,9 @@ export default function GameBoard(props: { boardSize: number }) {
     
     
     return (
-        <div>
             <div className={styles.boardContainer} style={{gridTemplateColumns: `repeat(${boardSize}, 1fr)`}}>
                 {boardTiles}
             </div>
-        </div>
     )
 }
   
