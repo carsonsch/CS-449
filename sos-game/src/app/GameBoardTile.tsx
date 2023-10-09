@@ -1,11 +1,19 @@
 "use client"
 
-import styles from './GameBoard.module.css'
-import { useEffect, useState } from 'react'
+import TileClickEvent from './TileClickEvent';
+import TileContent from './TileContent'
+import styles from './GameBoardTile.module.css'
 
-export default function GameBoardTile(props: { xPos: number, yPos: number }) {
+export default function GameBoardTile(props: { xPos: number, yPos: number, marker: TileContent, onClick: (e: TileClickEvent) => void; }) {
+    function sendClickEvent(): void {
+        const e: TileClickEvent = new TileClickEvent(props.xPos, props.yPos, props.marker);
+        props.onClick(e);
+    }
+    
     return (
-        <div>{`${props.xPos}, ${props.yPos}`}</div>
+        <div className={styles.tile} onClick={() => sendClickEvent()}>
+            <span>{props.marker}</span>
+        </div>
     )
 }
   

@@ -12,14 +12,5 @@
 .boardContainer > div {
     border-top: 1px solid black;
     border-left: 1px solid black;
-}
-
-.boardLine {
-    width: 562px;
-    height: 3px;
-    background-color: red;
-    transform: rotate(45deg);
-    position: absolute;
-    top: 320px;
-    left: 401px;
+    min-width: 0;
 }

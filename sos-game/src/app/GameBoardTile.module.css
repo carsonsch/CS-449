@@ -1,0 +1,19 @@
+.tile {
+    display: flex;
+    align-items: center;
+    container-type: size;
+}
+
+.tile > span {
+    width: 100%;
+    text-align: center;
+    font-size: 100cqh;
+}
+
+.emptyTile {
+    cursor: pointer;
+}
+
+.fullTile {
+    cursor: not-allowed;
+}

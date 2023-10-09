@@ -1,0 +1,8 @@
+.playerHeader {
+    text-align: center;
+    width: 100%;
+}
+
+.playerOptions * {
+    margin-right: 4px;
+}
