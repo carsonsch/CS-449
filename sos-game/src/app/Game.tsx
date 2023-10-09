@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from 'react';
-import TitleScreen from './TitleScreen';
+import TitleScreen from './TitleScreen/TitleScreen';
 import styles from './TitleScreen.module.css'
-import GameGui from './GameGui';
+import GameGui from './GameGui/GameGui';
 import GameOptions from './GameOptions';
 
 export default function Game() {

@@ -1,7 +1,7 @@
 "use client"
 
-import TileClickEvent from './TileClickEvent';
-import TileContent from './TileContent'
+import TileClickEvent from '../TileClickEvent';
+import TileContent from '../enums/TileContent'
 import styles from './GameBoardTile.module.css'
 
 export default function GameBoardTile(props: { xPos: number, yPos: number, marker: TileContent, onClick: (e: TileClickEvent) => void; }) {

@@ -1,4 +1,4 @@
-import TileContent from "./TileContent";
+import TileContent from "./enums/TileContent";
 
 export default class TileClickEvent {
     public tileX: number;

@@ -1,5 +1,5 @@
-import Player from "./Player";
-import TileContent from "./TileContent";
+import Player from "../enums/Player";
+import TileContent from "../enums/TileContent";
 
 export default class GameBoard {
     private boardSize: number;

@@ -2,8 +2,8 @@
 
 import React, { useRef, useState } from 'react';
 import styles from './PlayerOptionsSidebar.module.css'
-import Player from './Player';
-import TileContent from './TileContent';
+import Player from '../enums/Player';
+import TileContent from '../enums/TileContent';
 
 export default function PlayerOptionsSidebar(props: {isThisPlayersTurn: boolean, player: Player, onMarkerChange: (player: Player, marker: TileContent) => void, playerMarker: TileContent}) {
     const [radioGroupName] = useState(Math.random().toString().slice(2));

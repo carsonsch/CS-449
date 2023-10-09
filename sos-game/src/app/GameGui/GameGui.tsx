@@ -1,16 +1,16 @@
 "use client"
 
-import GameBoardGui from '@/app/GameBoardGui'
+import GameBoardGui from '@/app/GameboardGui/GameBoardGui'
 import styles from './GameGui.module.css'
 import { useEffect, useState } from 'react'
-import GameBoardSimple from './GameBoardSimple'
-import GameOptions from './GameOptions'
-import GameModes from './GameModes'
-import GameBoard from './GameBoard'
-import GameBoardGeneral from './GameBoardGeneral'
-import PlayerOptionsSidebar from './PlayerOptionsSidebar'
-import Player from './Player'
-import TileContent from './TileContent'
+import GameBoardSimple from '../gameboards/GameBoardSimple'
+import GameOptions from '../GameOptions'
+import GameModes from '../enums/GameModes'
+import GameBoard from '../gameboards/GameBoard'
+import GameBoardGeneral from '../gameboards/GameBoardGeneral'
+import PlayerOptionsSidebar from '../PlayerOptionsSidebar/PlayerOptionsSidebar'
+import Player from '../enums/Player'
+import TileContent from '../enums/TileContent'
 
 export default function GameGui(props: {gameOptions: GameOptions}) {
     let board: GameBoard;

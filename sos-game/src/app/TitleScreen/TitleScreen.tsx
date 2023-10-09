@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import ScrollingWordBackground from './ScrollingWordBackground'
+import ScrollingWordBackground from '../ScrollingWordBackground/ScrollingWordBackground'
 import styles from './TitleScreen.module.css'
-import GameOptions from './GameOptions';
-import GameModes from './GameModes';
+import GameOptions from '../GameOptions';
+import GameModes from '../enums/GameModes';
 
 export default function TitleScreen(props: { onGameStart: (gameOptions: GameOptions) => void; }) {
     const [boardSize, setBoardSize] = useState(3);

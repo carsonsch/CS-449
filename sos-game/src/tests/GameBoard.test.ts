@@ -1,4 +1,4 @@
-import GameBoard from '../app/GameBoard';
+import GameBoard from '../app/gameboards/GameBoard';
 
 test("Can create GameBoard of a given size", () => {
     expect(() => {

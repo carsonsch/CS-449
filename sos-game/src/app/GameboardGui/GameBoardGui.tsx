@@ -2,11 +2,11 @@
 
 import styles from './GameBoardGui.module.css'
 import { useEffect, useState } from 'react'
-import GameBoardTile from './GameBoardTile';
-import TileClickEvent from './TileClickEvent';
-import GameBoard from './GameBoard';
-import TileContent from './TileContent';
-import Player from './Player';
+import GameBoardTile from '../GameBoardTile/GameBoardTile';
+import TileClickEvent from '../TileClickEvent';
+import GameBoard from '../gameboards/GameBoard';
+import TileContent from '../enums/TileContent';
+import Player from '../enums/Player';
 
 export default function GameBoardGui(props: { board: GameBoard, onCurrentPlayerChange: (player: Player) => void; }) {
     const [boardTiles, setBoardTiles] = useState<JSX.Element[]>();
