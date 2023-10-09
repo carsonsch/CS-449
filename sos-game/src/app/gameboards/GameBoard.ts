@@ -9,6 +9,10 @@ export default class GameBoard {
     private playerWithNextMove: Player = Player.Player1;
 
     constructor(boardSize: number) {
+        if (boardSize < 3 || boardSize > 12) {
+            throw new Error("Board size must be between 3 and 12");
+        }
+
         this.boardSize = boardSize;
         this.initializeBoard(boardSize);
     }
@@ -43,11 +47,11 @@ export default class GameBoard {
 
     public getTile(x: number, y: number): TileContent {
         if (x < 0 || x >= this.boardSize) {
-            throw new Error("x value is not in range of board.");
+            console.log("x value is not in range of board.");
         }
 
         if (y < 0 || y >= this.boardSize) {
-            throw new Error("y value is not in range of board.");
+            console.log("y value is not in range of board.");
         }
 
         return this.boardData[x][y] as TileContent;

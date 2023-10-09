@@ -44,6 +44,10 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
         }
     }
 
+    function newGameHandler(): void {
+        location.reload();
+    }
+
     return (
         <div className={styles.centerContainer}>
             <div className={styles.gameGuiContainer}>
@@ -65,6 +69,8 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
                 />
             </div>
             <div>{currentPlayerWithMove}'s turn</div>
+            <br/>
+            <button onClick={newGameHandler}>New game</button>
         </div>
     )
 }
