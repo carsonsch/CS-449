@@ -4,6 +4,7 @@ import TileContent from "../enums/TileContent";
 
 export default class GameBoardGeneral extends GameBoard {
     private isGameCompleted: boolean = false;
+    private gameWinner: Player | null = null;
 
     constructor(boardSize: number) {
         super(boardSize);
@@ -17,8 +18,49 @@ export default class GameBoardGeneral extends GameBoard {
         if (!successfulMove) {
             return false;
         }
-        
-        this.alternatePlayerWithNextMove();
+
+        const wasSosCreated = this.detectSosForPlayerMove(xPos, yPos, curPlayer);
+
+        if (this.isBoardFull()) {
+            this.isGameCompleted = true;
+            this.gameWinner = this.getPlayerWithMostSoses();
+            return true;
+        }
+
+        if (!wasSosCreated) {
+            this.alternatePlayerWithNextMove();
+        }
+
         return true;
+    }
+
+    public isGameComplete(): boolean {
+        return this.isGameCompleted;    
+    }
+
+    public getGameWinner(): Player | null {
+        return this.gameWinner;   
+    }
+
+    private getPlayerWithMostSoses(): Player | null {
+        const soses = this.getCompletedSoses();
+        let bluePlayerCount = 0;
+        let redPlayerCount = 0;
+
+        for (const sos of soses) {
+            if (sos.player === Player.Blue) {
+                bluePlayerCount++;
+            } else if (sos.player === Player.Red) {
+                redPlayerCount++;
+            }
+        }
+
+        if (bluePlayerCount > redPlayerCount) {
+            return Player.Blue;
+        } else if (redPlayerCount > bluePlayerCount) {
+            return Player.Red;
+        } else {
+            return null;
+        }
     }
 }

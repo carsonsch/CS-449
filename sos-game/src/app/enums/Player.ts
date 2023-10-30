@@ -1,6 +1,6 @@
 enum Player {
-    Player1 = "Player 1",
-    Player2 = "Player 2"
+    Blue = "Blue",
+    Red = "Red"
 }
 
 export default Player;

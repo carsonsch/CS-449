@@ -39,6 +39,6 @@ test("Trying to create a board size too large should fail", () => {
 test("When creating a new board, player 1 should have the first move", () => {
     let board = new GameBoard(3);
 
-    expect(board.getPlayerWithNextMove()).toBe(Player.Player1)
+    expect(board.getPlayerWithNextMove()).toBe(Player.Blue)
 });
 

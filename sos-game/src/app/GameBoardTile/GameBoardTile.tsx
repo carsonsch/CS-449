@@ -11,7 +11,7 @@ export default function GameBoardTile(props: { xPos: number, yPos: number, marke
     }
     
     return (
-        <div className={styles.tile} onClick={() => sendClickEvent()}>
+        <div className={styles.tile} onClick={() => sendClickEvent()} data-tile={props.xPos + "," + props.yPos}>
             <span>{props.marker}</span>
         </div>
     )

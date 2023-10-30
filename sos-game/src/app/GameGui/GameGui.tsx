@@ -24,9 +24,10 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
 
     const [gameBoard, setGameBoard] = useState(board);
     const [currentPlayerWithMove, setCurrentPlayerWithMove] = useState(board.getPlayerWithNextMove());
-    const [player1Marker, setPlayer1Marker] = useState(board.getPlayersMarker(Player.Player1));
-    const [player2Marker, setPlayer2Marker] = useState(board.getPlayersMarker(Player.Player2));
-
+    const [player1Marker, setPlayer1Marker] = useState(board.getPlayersMarker(Player.Blue));
+    const [player2Marker, setPlayer2Marker] = useState(board.getPlayersMarker(Player.Red));
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [winningPlayer, setWinningPlayer] = useState<Player | null>(null);
 
     function currentPlayerChangeHandler(player: Player): void {
         setCurrentPlayerWithMove(player);
@@ -35,13 +36,18 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
     function markerChangeHandler(player: Player, marker: TileContent): void {
         gameBoard.setPlayerMarker(player, marker);
         
-        if (player === Player.Player1) {
+        if (player === Player.Blue) {
             setPlayer1Marker(marker);
-        } else if (player === Player.Player2) {
+        } else if (player === Player.Red) {
             setPlayer2Marker(marker);
         } else {
             throw new Error("Invalid player");
         }
+    }
+
+    function gameWinnerHandler(player: Player | null): void {
+        setWinningPlayer(player);
+        setIsGameOver(true);
     }
 
     function newGameHandler(): void {
@@ -50,27 +56,38 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
 
     return (
         <div className={styles.centerContainer}>
-            <div className={styles.gameGuiContainer}>
+            <div className={styles.winnerPopover + " " + (isGameOver ? "" : styles.invisible)}>
+                <h1>
+                    {winningPlayer
+                        ? <span>{winningPlayer} player won!</span>
+                        : <span>The game finished with a draw!</span>
+                    }
+                </h1>
+                <button onClick={newGameHandler}>New game</button>
+            </div>
+
+            <div className={styles.gameGuiContainer + " " + (isGameOver ? styles.faded : "")}>
                 <PlayerOptionsSidebar
-                    player={Player.Player1}
-                    isThisPlayersTurn={currentPlayerWithMove === Player.Player1}
+                    player={Player.Blue}
+                    isThisPlayersTurn={currentPlayerWithMove === Player.Blue}
                     onMarkerChange={markerChangeHandler}
                     playerMarker={player1Marker}
                 />
                 <div className={styles.gameBoardContainer}>
-                    <GameBoardGui board={gameBoard} onCurrentPlayerChange={currentPlayerChangeHandler}></GameBoardGui>
+                    <GameBoardGui board={gameBoard} onCurrentPlayerChange={currentPlayerChangeHandler} onGameWinnerHandler={gameWinnerHandler}/>
                 </div>
 
                 <PlayerOptionsSidebar
-                    player={Player.Player2}
-                    isThisPlayersTurn={currentPlayerWithMove === Player.Player2}
+                    player={Player.Red}
+                    isThisPlayersTurn={currentPlayerWithMove === Player.Red}
                     onMarkerChange={markerChangeHandler}
                     playerMarker={player2Marker}
                 />
             </div>
-            <div>{currentPlayerWithMove}'s turn</div>
-            <br/>
-            <button onClick={newGameHandler}>New game</button>
+            <div className={styles.bottomBar + " " + (isGameOver ? styles.faded : "")}>
+                <div>{currentPlayerWithMove}'s turn</div>
+                <button onClick={newGameHandler}>New game</button>
+            </div>
         </div>
     )
 }
