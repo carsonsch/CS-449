@@ -14,11 +14,20 @@ export default function GameBoardGui(props: { board: GameBoard, onCurrentPlayerC
     const [boardLines, setBoardLines] = useState<JSX.Element[]>();
     const gameBoardRef = useRef<HTMLDivElement>(null);
 
+    props.board.setGamestateChangeHandler(handleGameStateChange);
     const boardSize: number = props.board.getBoardSize();
 
     function handleTileClick(e: TileClickEvent): void {
+        const playerWithNextMove = props.board.getPlayerWithNextMove();
+        if (props.board.getPlayerOptions(playerWithNextMove).cpuPlaying) {
+            return;
+        }
+
         props.board.makeNextMove(e.tileX, e.tileY);
         console.log(`board.makeNextMove(${e.tileX}, ${e.tileY});`);
+    }
+
+    function handleGameStateChange(): void {
         rebuildTiles();
         rebuildLines();
 

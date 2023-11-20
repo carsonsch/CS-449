@@ -11,6 +11,7 @@ import GameBoardGeneral from '../gameboards/GameBoardGeneral'
 import PlayerOptionsSidebar from '../PlayerOptionsSidebar/PlayerOptionsSidebar'
 import Player from '../enums/Player'
 import TileContent from '../enums/TileContent'
+import PlayerOptions from '../PlayerOptions'
 
 export default function GameGui(props: {gameOptions: GameOptions}) {
     let board: GameBoard;
@@ -23,9 +24,10 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
     }
 
     const [gameBoard, setGameBoard] = useState(board);
-    const [currentPlayerWithMove, setCurrentPlayerWithMove] = useState(board.getPlayerWithNextMove());
-    const [player1Marker, setPlayer1Marker] = useState(board.getPlayersMarker(Player.Blue));
-    const [player2Marker, setPlayer2Marker] = useState(board.getPlayersMarker(Player.Red));
+    const [currentPlayerWithMove, setCurrentPlayerWithMove] = useState(gameBoard.getPlayerWithNextMove());
+    const [bluePlayerOptions, setBluePlayerOptions] = useState(gameBoard.getPlayerOptions(Player.Blue));
+    const [redPlayerOptions, setRedPlayerOptions] = useState(gameBoard.getPlayerOptions(Player.Red));
+
     const [isGameOver, setIsGameOver] = useState(false);
     const [winningPlayer, setWinningPlayer] = useState<Player | null>(null);
 
@@ -33,16 +35,11 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
         setCurrentPlayerWithMove(player);
     }
 
-    function markerChangeHandler(player: Player, marker: TileContent): void {
-        gameBoard.setPlayerMarker(player, marker);
-        
-        if (player === Player.Blue) {
-            setPlayer1Marker(marker);
-        } else if (player === Player.Red) {
-            setPlayer2Marker(marker);
-        } else {
-            throw new Error("Invalid player");
-        }
+    function playerOptionsChangeHandler(player: Player, opts: PlayerOptions): void {  
+        gameBoard.setPlayerOptions(player, opts);
+
+        setBluePlayerOptions(gameBoard.getPlayerOptions(Player.Blue));
+        setRedPlayerOptions(gameBoard.getPlayerOptions(Player.Red));
     }
 
     function gameWinnerHandler(player: Player | null): void {
@@ -70,8 +67,8 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
                 <PlayerOptionsSidebar
                     player={Player.Blue}
                     isThisPlayersTurn={currentPlayerWithMove === Player.Blue}
-                    onMarkerChange={markerChangeHandler}
-                    playerMarker={player1Marker}
+                    onPlayerOptionsChange={playerOptionsChangeHandler}
+                    playerOptions={bluePlayerOptions}
                 />
                 <div className={styles.gameBoardContainer}>
                     <GameBoardGui board={gameBoard} onCurrentPlayerChange={currentPlayerChangeHandler} onGameWinnerHandler={gameWinnerHandler}/>
@@ -80,8 +77,8 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
                 <PlayerOptionsSidebar
                     player={Player.Red}
                     isThisPlayersTurn={currentPlayerWithMove === Player.Red}
-                    onMarkerChange={markerChangeHandler}
-                    playerMarker={player2Marker}
+                    onPlayerOptionsChange={playerOptionsChangeHandler}
+                    playerOptions={redPlayerOptions}
                 />
             </div>
             <div className={styles.bottomBar + " " + (isGameOver ? styles.faded : "")}>

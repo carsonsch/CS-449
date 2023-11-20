@@ -4,15 +4,19 @@ import React, { useRef, useState } from 'react';
 import styles from './PlayerOptionsSidebar.module.css'
 import Player from '../enums/Player';
 import TileContent from '../enums/TileContent';
+import PlayerOptions from '../PlayerOptions';
 
-export default function PlayerOptionsSidebar(props: {isThisPlayersTurn: boolean, player: Player, onMarkerChange: (player: Player, marker: TileContent) => void, playerMarker: TileContent}) {
+export default function PlayerOptionsSidebar(props: {isThisPlayersTurn: boolean, player: Player, onPlayerOptionsChange: (player: Player, options: PlayerOptions) => void, playerOptions: PlayerOptions}) {
     const [radioGroupName] = useState(Math.random().toString().slice(2));
+    const cpuPlayingCheckbox = useRef<HTMLInputElement>(null);
+    
+    function optionsChangeHandler(): void {
+        const selectedMarker = document.querySelector<HTMLInputElement>(`input[name="${radioGroupName}"]:checked`)?.value ?? "S";
+        const marker: TileContent = selectedMarker as TileContent;
+        const cpuPlaying = cpuPlayingCheckbox.current?.checked ?? false;
 
-    function markerChangeHandler(): void {
-        const selected = document.querySelector<HTMLInputElement>(`input[name="${radioGroupName}"]:checked`)?.value ?? "S";
-
-        const marker: TileContent = selected as TileContent;
-        props.onMarkerChange(props.player, marker);
+        const opts: PlayerOptions = { cpuPlaying, marker };
+        props.onPlayerOptionsChange(props.player, opts);
     }
 
     return (
@@ -24,9 +28,9 @@ export default function PlayerOptionsSidebar(props: {isThisPlayersTurn: boolean,
                     <input
                         type="radio"
                         value="S"
-                        checked={props.playerMarker === "S"}
+                        checked={props.playerOptions.marker === "S"}
                         name={radioGroupName}
-                        onChange={markerChangeHandler}
+                        onChange={optionsChangeHandler}
                     />
                     S
                 </label>
@@ -34,11 +38,22 @@ export default function PlayerOptionsSidebar(props: {isThisPlayersTurn: boolean,
                     <input
                         type="radio"
                         value="O"
-                        checked={props.playerMarker === "O"}
+                        checked={props.playerOptions.marker === "O"}
                         name={radioGroupName}
-                        onChange={markerChangeHandler}
+                        onChange={optionsChangeHandler}
                     />
                     O
+                </label>
+            </div>
+            <div>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={props.playerOptions.cpuPlaying}
+                        onChange={optionsChangeHandler}
+                        ref={cpuPlayingCheckbox}
+                    />
+                    Computer
                 </label>
             </div>
         </div>

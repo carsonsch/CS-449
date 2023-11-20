@@ -2,15 +2,19 @@ import Player from "../enums/Player";
 import TileContent from "../enums/TileContent";
 import CompletedSos from "../CompletedSos";
 import Coord from "../Coord";
+import PlayerOptions from "../PlayerOptions";
+import { GameboardCpuPlayer } from "../GameboardCpuPlayer";
 
 
 export default class GameBoard {
     private boardSize: number;
-    private boardData: (TileContent | null)[][] = [];
+    private boardData: (TileContent)[][] = [];
     private completedSoses: CompletedSos[] = [];
-    private bluePlayerMarker: TileContent = TileContent.S;
-    private redPlayerMarker: TileContent = TileContent.O;
+    private bluePlayerOptions: PlayerOptions = { marker: TileContent.S, cpuPlaying: false }
+    private redPlayerOptions: PlayerOptions = { marker: TileContent.O, cpuPlaying: false }
     private playerWithNextMove: Player = Player.Blue;
+    private gameStateChangeHandler: (() => void) | null = null;
+    private cpuMoveIds = {Red: -1, Blue: -1};
 
     constructor(boardSize: number) {
         if (boardSize < 3 || boardSize > 12) {
@@ -22,10 +26,10 @@ export default class GameBoard {
     }
 
     private initializeBoard(boardSize: number) {
-        this.boardData = new Array(boardSize).fill(null);
+        this.boardData = new Array(boardSize).fill(TileContent.BLANK);
 
         for (let i = 0; i < boardSize; i++) {
-            this.boardData[i] = new Array(boardSize).fill(null);
+            this.boardData[i] = new Array(boardSize).fill(TileContent.BLANK);
         }
     }
 
@@ -38,7 +42,7 @@ export default class GameBoard {
             return false;
         }
 
-        if (this.boardData[x][y] != null) {
+        if (this.boardData[x][y] != TileContent.BLANK) {
             return false;
         }
 
@@ -67,12 +71,31 @@ export default class GameBoard {
             throw new Error("Cannot set a player's marker to 'BLANK'");
         }
 
-        if (player == Player.Blue) {
-            this.bluePlayerMarker = marker;
-        } else if (player == Player.Red) {
-            this.redPlayerMarker = marker;
+        const opts = this.getPlayerOptions(player);
+        opts.marker = marker;
+
+        this.setPlayerOptions(player, opts);
+    }
+
+    public setPlayerOptions(player: Player, options: PlayerOptions): void {
+        const optsCopy = structuredClone(options);
+
+        if (player === Player.Blue) {
+            this.bluePlayerOptions = optsCopy;
+        } else if (player === Player.Red) {
+            this.redPlayerOptions = optsCopy;
         } else {
             throw new Error("Invalid player.");
+        }
+
+        const curPlayer = this.getPlayerWithNextMove();
+        if (curPlayer === player && options.cpuPlaying) {
+            console.log("will set move for player");
+            this.handleCpuMove();
+        }
+
+        if (!options.cpuPlaying) {
+            clearTimeout(this.cpuMoveIds[player]);
         }
     }
 
@@ -84,11 +107,11 @@ export default class GameBoard {
         this.playerWithNextMove = this.playerWithNextMove === Player.Blue ? Player.Red : Player.Blue;
     }
 
-    public getPlayersMarker(player: Player): TileContent {
+    public getPlayerOptions(player: Player): PlayerOptions {
         if (player === Player.Blue) {
-            return this.bluePlayerMarker;
+            return this.bluePlayerOptions;
         } else if (player === Player.Red) {
-            return this.redPlayerMarker;
+            return this.redPlayerOptions;
         } else {
             throw new Error("Invalid player");
         }
@@ -102,7 +125,7 @@ export default class GameBoard {
         throw new Error("Not implemented");
     }
 
-    public makeNextMove(xPos: number, yPos: number): boolean {
+    public makeNextMove(xPos: number, yPos: number, markerOverride: TileContent | null = null): boolean {
         throw new Error("Not implemented");
     }
 
@@ -112,7 +135,7 @@ export default class GameBoard {
 
     public isBoardFull(): boolean {
         for (let row of this.boardData) {
-            if (row.includes(null)) {
+            if (row.includes(TileContent.BLANK)) {
                 return false;
             }
         }
@@ -165,5 +188,43 @@ export default class GameBoard {
 
         this.completedSoses.push(sos);
         return true;
+    }
+
+    public handleCpuMove() {
+        const curPlayer = this.getPlayerWithNextMove();
+        const opts = this.getPlayerOptions(curPlayer);
+
+        if (!opts.cpuPlaying) {
+            return;
+        }
+        console.log("setting up cpu move");
+
+        let timeoutId = setTimeout(() => {
+            const cpuMove = GameboardCpuPlayer.findNextMove(this);
+
+            // If the player turns off the CPU player while the timeout is running
+            // we need to check again so we don't accidentally play for them.
+            const latestOps = this.getPlayerOptions(curPlayer);
+            if (!latestOps.cpuPlaying) {
+                return;
+            }
+
+            console.log("making move at", cpuMove.tileX, cpuMove.tileY, cpuMove.marker);
+            this.makeNextMove(cpuMove.tileX, cpuMove.tileY, cpuMove.marker);
+            console.log("done making move");
+        }, 2000);
+
+        clearTimeout(this.cpuMoveIds[curPlayer]);
+        this.cpuMoveIds[curPlayer] = Number(timeoutId);
+    }
+
+    public setGamestateChangeHandler(handler: (() => void) | null) {
+        this.gameStateChangeHandler = handler;
+    }
+
+    public callGameStateChangeHandler(): void {
+        if (this.gameStateChangeHandler) {
+            this.gameStateChangeHandler();
+        }
     }
 }
