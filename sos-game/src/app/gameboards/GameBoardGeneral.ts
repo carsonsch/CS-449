@@ -1,6 +1,7 @@
 import GameBoard from "./GameBoard";
 import Player from "../enums/Player";
 import TileContent from "../enums/TileContent";
+import GameModes from "../enums/GameModes";
 
 export default class GameBoardGeneral extends GameBoard {
     private isGameCompleted: boolean = false;
@@ -8,6 +9,7 @@ export default class GameBoardGeneral extends GameBoard {
 
     constructor(boardSize: number) {
         super(boardSize);
+        this.addGameRecordingHeader(GameModes.GeneralGame);
     }
 
     public makeNextMove(xPos: number, yPos: number, markerOverride: TileContent | null = null): boolean {

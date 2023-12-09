@@ -6,6 +6,7 @@ import PlayerOptions from "../PlayerOptions";
 import { GameboardCpuPlayer } from "../GameboardCpuPlayer";
 import TileClickEvent from "../TileClickEvent";
 import PlayerMove from "../PlayerMove";
+import GameModes from "../enums/GameModes";
 
 
 export default class GameBoard {
@@ -18,6 +19,8 @@ export default class GameBoard {
     private gameStateChangeHandler: (() => void) | null = null;
     private cpuMoveIds = {Red: -1, Blue: -1};
     private gameRecording: string = "";
+    private isInReplayMode: boolean = false;
+    private replayMoves: PlayerMove[] = [];
 
     constructor(boardSize: number) {
         if (boardSize < 3 || boardSize > 12) {
@@ -200,10 +203,29 @@ export default class GameBoard {
         if (!opts.cpuPlaying) {
             return;
         }
-        console.log("setting up cpu move");
+        console.log("setting up cpu move", curPlayer, opts);
 
         let timeoutId = setTimeout(() => {
-            const cpuMove = GameboardCpuPlayer.findNextMove(this);
+            let moveX, moveY: number;
+            let marker: TileContent;
+
+            if (this.isInReplayMode) {
+                console.log(this.replayMoves);
+                const move = this.replayMoves.shift();
+                console.log(move);
+                if (!move) {
+                    return;
+                }
+
+                moveX = move.x;
+                moveY = move.y;
+                marker = move.marker;
+            } else {
+                const move = GameboardCpuPlayer.findNextMove(this);
+                moveX = move.tileX;
+                moveY = move.tileY;
+                marker = move.marker;
+            }
 
             // If the player turns off the CPU player while the timeout is running
             // we need to check again so we don't accidentally play for them.
@@ -212,11 +234,14 @@ export default class GameBoard {
                 return;
             }
 
-            console.log("making move at", cpuMove.tileX, cpuMove.tileY, cpuMove.marker);
-            this.makeNextMove(cpuMove.tileX, cpuMove.tileY, cpuMove.marker);
+            console.log("making move at", moveX, moveY, marker);
+            this.makeNextMove(moveX, moveY, marker);
             console.log("done making move");
         }, 2000);
 
+        console.log("move scheduled for player", curPlayer, timeoutId);
+        
+        // there is a timing issue here:
         clearTimeout(this.cpuMoveIds[curPlayer]);
         this.cpuMoveIds[curPlayer] = Number(timeoutId);
     }
@@ -237,5 +262,17 @@ export default class GameBoard {
 
     public getGameRecording(): string {
         return this.gameRecording;
+    }
+
+    public addGameRecordingHeader(gameMode: GameModes): void {
+        this.gameRecording = `${this.boardSize},${gameMode}\n`; + this.gameRecording;
+    }
+
+    public setReplayMoves(moves: PlayerMove[]): void {
+        this.isInReplayMode = true;
+        this.replayMoves = moves;
+
+        this.setPlayerOptions(Player.Blue, {marker: TileContent.S, cpuPlaying: true});
+        this.setPlayerOptions(Player.Red, {marker: TileContent.O, cpuPlaying: true});
     }
 }

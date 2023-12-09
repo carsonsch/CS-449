@@ -1,14 +1,16 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ScrollingWordBackground from '../ScrollingWordBackground/ScrollingWordBackground'
 import styles from './TitleScreen.module.css'
 import GameOptions from '../GameOptions';
 import GameModes from '../enums/GameModes';
+import { ReplayParser } from '../ReplayParser';
 
 export default function TitleScreen(props: { onGameStart: (gameOptions: GameOptions) => void; }) {
     const [boardSize, setBoardSize] = useState(3);
     const [selectedGameMode, setSelectedGameMode] = useState(GameModes.SimpleGame);
+    const replayFileSelectorRef = useRef<HTMLInputElement>(null);
 
     const boardSizeMin = 3;
     const boardSizeMax = 12;
@@ -22,13 +24,44 @@ export default function TitleScreen(props: { onGameStart: (gameOptions: GameOpti
         setSelectedGameMode(gameMode);
     }
 
-    function startGame(): void {
+    function startGame(gameOptions: GameOptions | null = null): void {
+        if (gameOptions !== null) {
+            props.onGameStart(gameOptions);
+            return;
+        }
+
         const options: GameOptions = {
             gameMode: selectedGameMode,
             boardSize: boardSize,
+            isReplayMode: false,
+            replayMoves: null
         };
 
         props.onGameStart(options);
+    }
+
+    async function replayFileSelected(): Promise<void> {
+        const fileCount = replayFileSelectorRef.current?.files?.length;
+        if (fileCount === null || fileCount === 0) {
+            return;
+        }
+
+        const file = replayFileSelectorRef.current?.files?.item(0);
+        const replayFile = await file?.text() ?? "";
+        
+        let gameOptions: GameOptions;
+        try {
+            gameOptions = ReplayParser.parseReplayFile(replayFile);
+        } catch {
+            alert("Invalid replay file. Try again.");
+            return;
+        }
+
+        if (replayFileSelectorRef.current !== null) {
+            replayFileSelectorRef.current.value = "";
+        }
+
+        startGame(gameOptions);
     }
 
     return (
@@ -71,7 +104,23 @@ export default function TitleScreen(props: { onGameStart: (gameOptions: GameOpti
                             Simple Game
                         </label>
                     </div>
-                    <button className={styles.startButton} onClick={startGame}>Start</button>
+                    <div>
+                        <button>
+                            <label htmlFor="replayFileSelector">
+                                Replay game from recording
+                            </label>
+                        </button>
+
+                        <input
+                            id="replayFileSelector"
+                            type="file"
+                            ref={replayFileSelectorRef}
+                            accept="text/plain"
+                            onChange={replayFileSelected}
+                            style={{display: "none"}}
+                        />
+                    </div>
+                    <button className={styles.startButton} onClick={() => startGame()}>Start</button>
                 </div>
             </div>
         </div>

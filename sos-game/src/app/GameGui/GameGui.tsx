@@ -12,18 +12,32 @@ import PlayerOptionsSidebar from '../PlayerOptionsSidebar/PlayerOptionsSidebar'
 import Player from '../enums/Player'
 import TileContent from '../enums/TileContent'
 import PlayerOptions from '../PlayerOptions'
+import { getDefaultCompilerOptions } from 'typescript'
 
 export default function GameGui(props: {gameOptions: GameOptions}) {
-    let board: GameBoard;
-    if (props.gameOptions.gameMode == GameModes.SimpleGame) {
-        board = new GameBoardSimple(props.gameOptions.boardSize);
-    } else if (props.gameOptions.gameMode == GameModes.GeneralGame) {
-        board = new GameBoardGeneral(props.gameOptions.boardSize);
-    } else {
-        throw new Error("Invalid game mode.");
+    const [gameBoard, setGameBoard] = useState(new GameBoard(3));
+    const [isGameBoardSetup, setIsGameBoardSetup] = useState(false);
+    const [isInReplayMode, setIsInReplayMode] = useState(false);
+
+    if (!isGameBoardSetup) {
+        let board: GameBoard;
+        if (props.gameOptions.gameMode == GameModes.SimpleGame) {
+            board = new GameBoardSimple(props.gameOptions.boardSize);
+        } else if (props.gameOptions.gameMode == GameModes.GeneralGame) {
+            board = new GameBoardGeneral(props.gameOptions.boardSize);
+        } else {
+            throw new Error("Invalid game mode.");
+        }
+    
+        if (props.gameOptions.isReplayMode && props.gameOptions.replayMoves !== null) {
+            board.setReplayMoves(props.gameOptions.replayMoves);
+            setIsInReplayMode(true);
+        }
+
+        setGameBoard(board);
+        setIsGameBoardSetup(true);
     }
 
-    const [gameBoard, setGameBoard] = useState(board);
     const [currentPlayerWithMove, setCurrentPlayerWithMove] = useState(gameBoard.getPlayerWithNextMove());
     const [bluePlayerOptions, setBluePlayerOptions] = useState(gameBoard.getPlayerOptions(Player.Blue));
     const [redPlayerOptions, setRedPlayerOptions] = useState(gameBoard.getPlayerOptions(Player.Red));
@@ -62,7 +76,7 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
 
     return (
         <div className={styles.centerContainer}>
-            <div className={styles.winnerPopover + " " + (isGameOver ? "" : styles.invisible)}>
+            <div className={`${styles.winnerPopover} ${isGameOver ? "" : styles.invisible}`}>
                 <h1>
                     {winningPlayer
                         ? <span>{winningPlayer} player won!</span>
@@ -77,23 +91,36 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
                 </div>            
             </div>
 
-            <div className={styles.gameGuiContainer + " " + (isGameOver ? styles.faded : "")}>
-                <PlayerOptionsSidebar
-                    player={Player.Blue}
-                    isThisPlayersTurn={currentPlayerWithMove === Player.Blue}
-                    onPlayerOptionsChange={playerOptionsChangeHandler}
-                    playerOptions={bluePlayerOptions}
-                />
+            <div className={`${isGameOver ? styles.faded : ""}`}>
+                {isInReplayMode
+                    ? <h3>Replay mode</h3>
+                    : <></>
+                }
+            </div>
+
+            <div className={`${styles.gameGuiContainer} ${isGameOver ? styles.faded : ""}`}>
+                {isInReplayMode
+                    ? <></>
+                    : <PlayerOptionsSidebar
+                        player={Player.Blue}
+                        isThisPlayersTurn={currentPlayerWithMove === Player.Blue}
+                        onPlayerOptionsChange={playerOptionsChangeHandler}
+                        playerOptions={bluePlayerOptions}
+                    />
+                }
                 <div className={styles.gameBoardContainer}>
                     <GameBoardGui board={gameBoard} onCurrentPlayerChange={currentPlayerChangeHandler} onGameWinnerHandler={gameWinnerHandler}/>
                 </div>
 
-                <PlayerOptionsSidebar
-                    player={Player.Red}
-                    isThisPlayersTurn={currentPlayerWithMove === Player.Red}
-                    onPlayerOptionsChange={playerOptionsChangeHandler}
-                    playerOptions={redPlayerOptions}
-                />
+                {isInReplayMode
+                    ? <></>
+                    : <PlayerOptionsSidebar
+                        player={Player.Red}
+                        isThisPlayersTurn={currentPlayerWithMove === Player.Red}
+                        onPlayerOptionsChange={playerOptionsChangeHandler}
+                        playerOptions={redPlayerOptions}
+                    />
+                }
             </div>
             <div className={styles.bottomBar + " " + (isGameOver ? styles.faded : "")}>
                 <div>{currentPlayerWithMove}'s turn</div>
