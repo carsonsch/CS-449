@@ -23,6 +23,7 @@ export default class GameBoardSimple extends GameBoard {
             return false;
         }
 
+        this.recordPlayerMove(xPos, yPos, marker, curPlayer);
         const wasSosCreated = this.detectSosForPlayerMove(xPos, yPos, curPlayer);
         if (wasSosCreated) {
             this.isGameCompleted = true;

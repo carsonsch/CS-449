@@ -27,6 +27,7 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
     const [currentPlayerWithMove, setCurrentPlayerWithMove] = useState(gameBoard.getPlayerWithNextMove());
     const [bluePlayerOptions, setBluePlayerOptions] = useState(gameBoard.getPlayerOptions(Player.Blue));
     const [redPlayerOptions, setRedPlayerOptions] = useState(gameBoard.getPlayerOptions(Player.Red));
+    const [recordingUrl, setRecordingUrl] = useState("");
 
     const [isGameOver, setIsGameOver] = useState(false);
     const [winningPlayer, setWinningPlayer] = useState<Player | null>(null);
@@ -43,12 +44,20 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
     }
 
     function gameWinnerHandler(player: Player | null): void {
+        const dlUrl = createDownloadUrlForString(gameBoard.getGameRecording());
+        
         setWinningPlayer(player);
+        setRecordingUrl(dlUrl);
         setIsGameOver(true);
     }
 
     function newGameHandler(): void {
         location.reload();
+    }
+
+    function createDownloadUrlForString(text: string): string {
+        const blob = new Blob([text], {type: "text/plain"});
+        return URL.createObjectURL(blob);
     }
 
     return (
@@ -60,7 +69,12 @@ export default function GameGui(props: {gameOptions: GameOptions}) {
                         : <span>The game finished with a draw!</span>
                     }
                 </h1>
-                <button onClick={newGameHandler}>New game</button>
+                <div className={styles.buttonsContainer}>
+                    <button onClick={newGameHandler}>New game</button>
+                    <a href={recordingUrl} download="GameSave.txt">
+                        <button>Save game recording</button>
+                    </a>
+                </div>            
             </div>
 
             <div className={styles.gameGuiContainer + " " + (isGameOver ? styles.faded : "")}>

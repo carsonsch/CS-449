@@ -46,3 +46,12 @@
     opacity: 0.8;
     filter: blur(2px);
 }
+
+.buttonsContainer {
+    display: flex;
+    gap: 12px;
+}
+
+.buttonsContainer button {
+    padding: 4px;
+}

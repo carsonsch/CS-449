@@ -4,6 +4,8 @@ import CompletedSos from "../CompletedSos";
 import Coord from "../Coord";
 import PlayerOptions from "../PlayerOptions";
 import { GameboardCpuPlayer } from "../GameboardCpuPlayer";
+import TileClickEvent from "../TileClickEvent";
+import PlayerMove from "../PlayerMove";
 
 
 export default class GameBoard {
@@ -15,6 +17,7 @@ export default class GameBoard {
     private playerWithNextMove: Player = Player.Blue;
     private gameStateChangeHandler: (() => void) | null = null;
     private cpuMoveIds = {Red: -1, Blue: -1};
+    private gameRecording: string = "";
 
     constructor(boardSize: number) {
         if (boardSize < 3 || boardSize > 12) {
@@ -226,5 +229,13 @@ export default class GameBoard {
         if (this.gameStateChangeHandler) {
             this.gameStateChangeHandler();
         }
+    }
+
+    public recordPlayerMove(x: number, y: number, marker: TileContent, player: Player): void {
+        this.gameRecording += `${player},${marker},${x},${y}\n`;
+    }
+
+    public getGameRecording(): string {
+        return this.gameRecording;
     }
 }
