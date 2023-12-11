@@ -12,6 +12,9 @@ export default class GameBoardSimple extends GameBoard {
         this.addGameRecordingHeader(GameModes.SimpleGame);
     }
 
+    // Returns which player has created the largest
+    // number of SOSes on the board. Returns null if the players have made the same
+    // number of SOSes.
     public makeNextMove(xPos: number, yPos: number, markerOverride: TileContent | null = null): boolean {
         if (this.isGameCompleted) {
             return false;

@@ -12,6 +12,8 @@ export default class GameBoardGeneral extends GameBoard {
         this.addGameRecordingHeader(GameModes.GeneralGame);
     }
 
+    // Handles when a player clicks on the board. This detects whether their move was valid,
+    // and if they created any SOSes.
     public makeNextMove(xPos: number, yPos: number, markerOverride: TileContent | null = null): boolean {
         const curPlayer: Player = this.getPlayerWithNextMove();
         const marker: TileContent = markerOverride ?? this.getPlayerOptions(curPlayer).marker;
@@ -49,6 +51,9 @@ export default class GameBoardGeneral extends GameBoard {
         return this.gameWinner;   
     }
 
+    // Returns which player has created the largest
+    // number of SOSes on the board. Returns null if the players have made the same
+    // number of SOSes.
     private getPlayerWithMostSoses(): Player | null {
         const soses = this.getCompletedSoses();
         let bluePlayerCount = 0;

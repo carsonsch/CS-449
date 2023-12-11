@@ -4,7 +4,6 @@ import CompletedSos from "../CompletedSos";
 import Coord from "../Coord";
 import PlayerOptions from "../PlayerOptions";
 import { GameboardCpuPlayer } from "../GameboardCpuPlayer";
-import TileClickEvent from "../TileClickEvent";
 import PlayerMove from "../PlayerMove";
 import GameModes from "../enums/GameModes";
 
@@ -31,6 +30,7 @@ export default class GameBoard {
         this.initializeBoard(boardSize);
     }
 
+    // Creates a 2d array and sets the board to have TileContent.BLANK for all of its values.
     private initializeBoard(boardSize: number) {
         this.boardData = new Array(boardSize).fill(TileContent.BLANK);
 
@@ -39,7 +39,9 @@ export default class GameBoard {
         }
     }
 
+    // Sets the value of a certain tile on the board
     public setTile(x: number, y: number, val: TileContent): boolean {
+        // Make sure the x and y position are in range
         if (x < 0 || x >= this.boardSize) {
             return false;
         }
@@ -56,6 +58,7 @@ export default class GameBoard {
         return true;
     }
 
+    // Gets a tile's contents
     public getTile(x: number, y: number): TileContent {
         if (x < 0 || x >= this.boardSize) {
             throw new Error("x value is out of range of board");
@@ -72,6 +75,7 @@ export default class GameBoard {
         return this.boardSize;
     }
     
+    // Changes a player's marker (such as whether they are going to place an S or an O)
     public setPlayerMarker(player: Player, marker: TileContent): void {
         if (marker === TileContent.BLANK) {
             throw new Error("Cannot set a player's marker to 'BLANK'");
@@ -83,6 +87,7 @@ export default class GameBoard {
         this.setPlayerOptions(player, opts);
     }
 
+    // Set a players options, such as whether they are using a CPU to play
     public setPlayerOptions(player: Player, options: PlayerOptions): void {
         const optsCopy = structuredClone(options);
 
@@ -123,14 +128,17 @@ export default class GameBoard {
         }
     }
 
+    // This class will be implemented by GameBoardGeneral or GameBoardSimple
     public isGameComplete(): boolean {
         throw new Error("Not implemented");
     }
 
+    // This class will be implemented by GameBoardGeneral or GameBoardSimple
     public getGameWinner(): Player | null {
         throw new Error("Not implemented");
     }
 
+    // This class will be implemented by GameBoardGeneral or GameBoardSimple
     public makeNextMove(xPos: number, yPos: number, markerOverride: TileContent | null = null): boolean {
         throw new Error("Not implemented");
     }
@@ -139,6 +147,7 @@ export default class GameBoard {
         return this.completedSoses;
     }
 
+    // Check if any cell in the board has any value
     public isBoardFull(): boolean {
         for (let row of this.boardData) {
             if (row.includes(TileContent.BLANK)) {
@@ -149,6 +158,7 @@ export default class GameBoard {
         return true;
     }
 
+    // Detects if the user has completed an SOS at the given X,Y position
     private getSosAt(xPos: number, yPos: number, player: Player): CompletedSos | null {
         const initialLetter = this.boardData[xPos][yPos];
 
@@ -186,6 +196,8 @@ export default class GameBoard {
         return null;
     }
 
+    // Attempts to find an SOS at a given X,Y position, and if there is one, it adds it to
+    // the completedSoses array.
     public detectSosForPlayerMove(xPos: number, yPos: number, player: Player): boolean {
         const sos = this.getSosAt(xPos, yPos, player);
         if (sos === null) {
@@ -196,6 +208,8 @@ export default class GameBoard {
         return true;
     }
 
+    // If the player want a CPU to play on it's behalf, this handles
+    // finding a good move, and making the move on behalf of the player
     public handleCpuMove() {
         const curPlayer = this.getPlayerWithNextMove();
         const opts = this.getPlayerOptions(curPlayer);
@@ -241,7 +255,6 @@ export default class GameBoard {
 
         console.log("move scheduled for player", curPlayer, timeoutId);
         
-        // there is a timing issue here:
         clearTimeout(this.cpuMoveIds[curPlayer]);
         this.cpuMoveIds[curPlayer] = Number(timeoutId);
     }
@@ -256,6 +269,7 @@ export default class GameBoard {
         }
     }
 
+    // This function is called for every player move, and records it to the gameRecording string
     public recordPlayerMove(x: number, y: number, marker: TileContent, player: Player): void {
         this.gameRecording += `${player},${marker},${x},${y}\n`;
     }
@@ -268,6 +282,7 @@ export default class GameBoard {
         this.gameRecording = `${this.boardSize},${gameMode}\n`; + this.gameRecording;
     }
 
+    // This takes in an array of player moves, and sets up the board so that it will replay them.
     public setReplayMoves(moves: PlayerMove[]): void {
         this.isInReplayMode = true;
         this.replayMoves = moves;
